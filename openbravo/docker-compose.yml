@@ -1,0 +1,48 @@
+version: '2.4'
+
+services:
+
+  rarc-openbravo:
+    #cpus: 4
+    #mem_reservation: 1536M
+    #mem_limit: 4G
+    image: rarc88/openbravo:3.0pr18q3.5
+    container_name: rarc-openbravo
+    restart: unless-stopped
+    # environment:
+      # - JPDA_ADDRESS: 8000
+    volumes:
+      # - openbravo-webapps:/usr/local/tomcat/webapps
+      - ./tomcat/context.xml:/usr/local/tomcat/conf/context.xml
+      - ./tomcat/server.xml:/usr/local/tomcat/conf/server.xml
+      - ./openbravo/config/Format.xml:/opt/openbravo/config/Format.xml
+      - ./openbravo/config/log4j.lcf:/opt/openbravo/config/log4j.lcf
+      - ./openbravo/config/Openbravo.properties:/opt/openbravo/config/Openbravo.properties
+      - ./openbravo/config/userconfig.xml:/opt/openbravo/config/userconfig.xml
+      - ./openbravo/attachments/:/opt/openbravo/attachments/
+      - ./openbravo/complete_modules/:/opt/openbravo/complete_modules/
+      - ./openbravo/partial_modules/:/opt/openbravo/partial_modules/
+      - /srv:/srv
+    # working_dir: /opt/openbravo
+    # user: '1000'
+    ports:
+      # - 8000:8000
+      - 10001:8080
+    networks:
+      - default
+    # depends_on:
+    #   - postgres
+    command:
+      - sh
+      - -c
+      - |
+        cd /docker-entrypoint-initdb.d && ./init.sh
+        catalina.sh jpda run
+
+# volumes:
+#   openbravo-webapps:
+
+networks:
+  default:
+    external:
+      name: docker
