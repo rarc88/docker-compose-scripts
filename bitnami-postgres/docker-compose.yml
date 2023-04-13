@@ -1,0 +1,79 @@
+version: '3.8'
+
+services:
+  postgresql-master:
+    cpus: 6
+    mem_limit: 8G
+    image: docker.io/bitnami/postgresql:10
+    container_name: postgresql-master
+    restart: unless-stopped
+    ports:
+      - 5434:5432
+    volumes:
+      - postgresql_master:/bitnami/postgresql
+      - ./init.sh:/docker-entrypoint-initdb.d/init.sh
+      - /srv:/srv
+    environment:
+      - TZ=America/Guayaquil
+      # - POSTGRESQL_USERNAME=postgres
+      - POSTGRESQL_PASSWORD=syspass
+      # - POSTGRESQL_DATABASE=replication_test
+      # - ALLOW_EMPTY_PASSWORD=yes
+      - MAIN_USER=tad
+      - MAIN_PASS=3FY8R0DX15
+      - POSTGRESQL_REPLICATION_MODE=master
+      - POSTGRESQL_REPLICATION_USER=replica
+      - POSTGRESQL_REPLICATION_PASSWORD=NReJp@qaj6ycHv+@
+      - POSTGRESQL_EXTRA_FLAGS=
+        -c max_connections=1000
+        -c shared_buffers=2GB
+        -c effective_cache_size=6GB
+        -c maintenance_work_mem=512MB
+        -c checkpoint_completion_target=0.9
+        -c wal_buffers=16MB
+        -c default_statistics_target=100
+        -c random_page_cost=1.1
+        -c effective_io_concurrency=200
+        -c work_mem=699kB
+        -c min_wal_size=1GB
+        -c max_wal_size=4GB
+        -c max_worker_processes=6
+        -c max_parallel_workers_per_gather=3
+        -c max_parallel_workers=6
+    working_dir: /srv/db_scripts
+    networks:
+      - default
+
+  postgresql-slave:
+    image: docker.io/bitnami/postgresql:10
+    container_name: postgresql-slave
+    restart: unless-stopped
+    ports:
+      - 5435:5432
+    volumes:
+      - postgresql_slave:/bitnami/postgresql
+    depends_on:
+      - postgresql-master
+    environment:
+      - TZ=America/Guayaquil
+      - POSTGRESQL_PASSWORD=syspass
+      - POSTGRESQL_REPLICATION_MODE=slave
+      - POSTGRESQL_REPLICATION_USER=replica
+      - POSTGRESQL_REPLICATION_PASSWORD=NReJp@qaj6ycHv+@
+      - POSTGRESQL_MASTER_HOST=postgresql-master
+      - POSTGRESQL_MASTER_PORT_NUMBER=5432
+      - POSTGRESQL_EXTRA_FLAGS=-c max_connections=1000
+        -c max_standby_archive_delay=900s
+        -c max_standby_streaming_delay=900s
+    networks:
+      - default
+
+volumes:
+  postgresql_master:
+  postgresql_slave:
+
+
+networks:
+  default:
+    external: true
+    name: docker

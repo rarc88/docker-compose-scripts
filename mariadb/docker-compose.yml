@@ -1,0 +1,36 @@
+version: "3.7"
+services:
+  mariadb:
+    image: mariadb
+    container_name: mariadb
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: Ra22*88rC
+      TZ: America/Guayaquil
+    ports:
+      - 3306:3306
+    volumes:
+      - mariadb:/var/lib/mysql
+    networks:
+      - default
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    environment:
+      PMA_HOST: mariadb
+      PMA_PORT: 3306
+      TZ: America/Guayaquil
+    restart: unless-stopped
+    ports:
+      - 3300:80
+    networks:
+      - default
+
+volumes:
+  mariadb:
+
+networks:
+  default:
+    external: true
+    name: docker

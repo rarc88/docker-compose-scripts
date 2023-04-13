@@ -1,0 +1,4 @@
+docker run --rm -it -p "3000:3000" -v "code_path":/home/node/app -w /home/node/app --name node-test node:16 bash
+docker run --rm -it -p "8080:8080" -v "/opt/www/nbm-frontend":/home/node/app -w /home/node/app --name node-test node:16 bash
+
+docker run --rm -it -p "3000:3000" -v "/opt/www/":/home/node/app -w /home/node/app --name node-test node:16 bash

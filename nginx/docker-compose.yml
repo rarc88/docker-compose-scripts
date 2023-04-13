@@ -1,0 +1,21 @@
+version: "3.8"
+services:
+  nginx:
+    image: nginx
+    container_name: nginx
+    restart: unless-stopped
+    environment:
+      TZ: America/Guayaquil
+    ports:
+      - 8000:8000
+      - 8001:8001
+    volumes:
+      - /opt/www:/var/www
+      - ./vhost.conf:/etc/nginx/conf.d/vhost.conf
+    networks:
+      - default
+
+networks:
+  default:
+    external: true
+    name: docker

@@ -1,0 +1,1 @@
+psql -U postgres -w -d $1 -a -f /srv/Respaldos_Jenkins/sqls/$2.sql

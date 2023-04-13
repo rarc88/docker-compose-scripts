@@ -1,0 +1,1 @@
+pg_dump -p 5432 -U postgres -F c -v -f /srv/restore_backups/${1}_$(date +%Y%m%d_%H%M).dmp ${1}

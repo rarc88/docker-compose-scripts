@@ -1,0 +1,11 @@
+Crear usuario
+docker exec -it postgres psql -U postgres -c "CREATE USER tad WITH SUPERUSER PASSWORD 'tad';"
+
+Restaurar base de datos
+docker exec -it postgres pg_restore -U postgres --host localhost --port 5432 --username "tad" --dbname "museos" --verbose /tmp/postgres/museos.dmp
+
+Respaldar base de datos
+docker exec postgres sh /tmp/postgres/backup_database.sh museos
+
+Crear volumen para persistencia
+docker volume create pgdata

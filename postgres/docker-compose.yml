@@ -1,0 +1,84 @@
+version: '3.8'
+
+services:
+  postgres:
+    #image: postgres:10.21
+    image: postgres_10_custom
+    container_name: postgres
+    build:
+      context: .
+      dockerfile: .Dockerfile
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: postgres
+      TZ: America/Guayaquil
+    volumes:
+      - postgres:/var/lib/postgresql/data
+      - ./init.sh:/docker-entrypoint-initdb.d/init.sh
+      - ./scripts:/opt/scripts
+      - /srv:/srv
+    working_dir: /opt/scripts
+    ports:
+      - 5432:5432
+    command:
+      - postgres
+      - -c
+      - shared_preload_libraries=pg_stat_statements,plugin_debugger
+      - -c
+      - pg_stat_statements.track=all
+      - -c
+      - max_connections=200
+    networks:
+      - default
+  
+  pgadmin4:
+    image: dpage/pgadmin4
+    container_name: pgadmin4
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "rarc88@gmail.com"
+      PGADMIN_DEFAULT_PASSWORD: "Ra22*88rC"
+    ports:
+      - "5430:80"
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+    depends_on:
+      - postgres
+    networks:
+      - default
+
+  postgres12:
+    image: postgres:12
+    container_name: postgres12
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: postgres
+      TZ: America/Guayaquil
+    volumes:
+      - postgres12:/var/lib/postgresql/data
+      - ./init.sh:/docker-entrypoint-initdb.d/init.sh
+      - ./scripts:/opt/scripts
+      - /srv:/srv
+    working_dir: /opt/scripts
+    ports:
+      - 5433:5432
+    command:
+      - postgres
+      - -c
+      - shared_preload_libraries=pg_stat_statements
+      - -c
+      - pg_stat_statements.track=all
+      - -c
+      - max_connections=200
+    networks:
+      - default
+
+volumes:
+  postgres:
+  pgadmin:
+  postgres12:
+
+networks:
+  default:
+    external: true
+    name: docker

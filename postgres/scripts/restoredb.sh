@@ -1,0 +1,1 @@
+pg_restore -U postgres --host localhost --port 5432 --username "tad" --dbname "${1}" -j 4 --verbose /srv/restore_backups/${2}

@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+
+  mongo:
+    image: mongo
+    container_name: mongo
+    restart: unless-stopped
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: rarc
+      MONGO_INITDB_ROOT_PASSWORD: Ra22*88rC
+    volumes:
+      - mongo_db:/data/db
+      - mongo_configdb:/data/configdb
+    networks:
+      - default
+
+volumes:
+  mongo_db:
+  mongo_configdb:
+
+
+networks:
+  default:
+    external: true
+    name: docker

@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  etendo:
+    image: rarc88/etendo:22.4.4
+    container_name: etendo
+    build:
+      context: .
+      dockerfile: ./tomcat/Dockerfile
+    restart: unless-stopped
+    user: '1000'
+    environment:
+      TZ: America/Guayaquil
+      JPDA_ADDRESS: 8000
+      JPDA_TRANSPORT: dt_socket
+    volumes:
+      - webapps:/usr/local/tomcat/webapps
+    working_dir: /opt/etendo
+    ports:
+      - 18000:8000
+      - 18080:8080
+    networks:
+      - default
+    depends_on:
+      - postgres
+    command: catalina.sh jpda run
+
+  postgres:
+    image: postgres:13
+    container_name: postgres-etendo
+    restart: unless-stopped
+    environment:
+      TZ: America/Guayaquil
+      POSTGRES_PASSWORD: syspass
+    volumes:
+      - postgres:/var/lib/postgresql/data
+      - ./postgres/init.sh:/docker-entrypoint-initdb.d/init.sh
+    ports:
+      - 6432:5432
+    networks:
+      - default
+
+volumes:
+  webapps:
+  postgres:
+
+
+networks:
+  default:
+    external: true
+    name: docker

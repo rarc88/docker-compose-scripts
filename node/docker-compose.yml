@@ -1,0 +1,28 @@
+version: "3"
+
+services:
+  node:
+    image: node:16
+    container_name: node
+    restart: unless-stopped
+    user: node
+    working_dir: /home/node/app
+    environment:
+      # - NODE_ENV=production
+      - NODE_ENV=development
+    volumes:
+      - /opt/www:/home/node/app
+    ports:
+      - 3000:3000
+      - 4000:4000
+      - 4173:4173
+      - 5173:5173
+      - 8080:8080
+    networks:
+      - default
+    command: tail -f /dev/null
+
+networks:
+  default:
+    external: true
+    name: docker
